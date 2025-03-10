@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Protocol Forwarder</title>
+    <script>
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const phoneNumbers = urlParams.get('phone');
+            let message = urlParams.get('message');
+
+            if (phoneNumbers) {
+                // Initialize smsUrl with multiple recipients support
+                let smsUrl = `sms:${phoneNumbers.split(',').join(';')}`;
+                if (message) {
+                    // Check if the message is already URI encoded
+                    const decodedMessage = decodeURIComponent(message);
+                    if (message === encodeURIComponent(decodedMessage)) {
+                        smsUrl += `?body=${message}`;
+                    } else {
+                        smsUrl += `?body=${encodeURIComponent(message)}`;
+                    }
+                }
+                window.location.href = smsUrl;
+            } else {
+                document.body.innerHTML = '<h1>Error: No phone number provided.</h1>';
+            }
+        };
+    </script>
+</head>
+<body>
+    <h1>Redirecting...</h1>
+</body>
+</html>
