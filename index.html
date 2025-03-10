@@ -10,18 +10,27 @@
             const phoneNumbers = urlParams.get('phone');
             let message = urlParams.get('message');
 
+            console.log(phoneNumbers);
+            console.log(phoneNumbers.split(','));
+
             if (phoneNumbers) {
+                // Trim leading spaces and replace them with '+'
+                const formattedPhoneNumbers = phoneNumbers.split(',').map(number => '+' + number.trim()).join(',');
+                
+                console.log(formattedPhoneNumbers);
+
                 // Initialize smsUrl with multiple recipients support
-                let smsUrl = `sms:${phoneNumbers.split(',').join(';')}`;
+                let smsUrl = `sms:open?addresses=${formattedPhoneNumbers}`;
                 if (message) {
                     // Check if the message is already URI encoded
                     const decodedMessage = decodeURIComponent(message);
                     if (message === encodeURIComponent(decodedMessage)) {
-                        smsUrl += `?body=${message}`;
+                        smsUrl += `&body=${message}`;
                     } else {
-                        smsUrl += `?body=${encodeURIComponent(message)}`;
+                        smsUrl += `&body=${encodeURIComponent(message)}`;
                     }
                 }
+                console.log(smsUrl);
                 window.location.href = smsUrl;
             } else {
                 document.body.innerHTML = '<h1>Error: No phone number provided.</h1>';
