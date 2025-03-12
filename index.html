@@ -10,8 +10,8 @@
             const phoneNumbers = urlParams.get('phone');
             let message = urlParams.get('message');
 
-            console.log(phoneNumbers);
-            console.log(phoneNumbers.split(','));
+            // console.log(phoneNumbers);
+            // console.log(phoneNumbers.split(','));
 
             if (phoneNumbers) {
                 // Trim leading spaces and replace them with '+'
@@ -34,6 +34,7 @@
                 window.location.href = smsUrl;
             } else {
                 document.body.innerHTML = '<h1>Error: No phone number provided.</h1>';
+                document.body.innerHTML += '<p>Make sure to provide at least one phone number in the URL query string ("?phone=..."). Separate multiple phone numbers with commas. Phone numbers must have a leading 1 (or other country code).</p>';
             }
         };
     </script>
