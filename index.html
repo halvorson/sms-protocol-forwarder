@@ -6,15 +6,30 @@
     <title>SMS Protocol Forwarder</title>
     <script>
         window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
+            let urlParams = new URLSearchParams(window.location.search);
             const phoneNumbers = urlParams.get('phone');
             let message = urlParams.get('message');
+            const jobDone = urlParams.get('job_done');
 
             // console.log(phoneNumbers);
             // console.log(phoneNumbers.split(','));
 
+            if (!phoneNumbers) {
+                // Some error messaging.
+                document.body.innerHTML = '<h1>Error: No phone number provided.</h1>';
+                document.body.innerHTML += '<p>Make sure to provide at least one phone number in the URL query string ("?phone=..."). Separate multiple phone numbers with commas. Phone numbers must have a leading 1 (or other country code).</p>';
+                return;
+            }
+
+            if (jobDone) {
+                // Shortcut code if it's already worked
+                document.body.innerHTML = '<h1>Job\'s Done!</h1>';
+                document.body.innerHTML += '<p>Feel free to close this window.</p>';
+                return;
+            }
+
             if (phoneNumbers) {
-                // Trim leading spaces and replace them with '+'
+                // Trim leading spaces and replace them with '+' to align with Apple's syntax
                 const formattedPhoneNumbers = phoneNumbers.split(',').map(number => '+' + number.trim()).join(',');
                 
                 console.log(formattedPhoneNumbers);
@@ -30,11 +45,14 @@
                         smsUrl += `&body=${encodeURIComponent(message)}`;
                     }
                 }
-                console.log(smsUrl);
+                //console.log(smsUrl);
+
+                // Set url param in last page visited in history, so upon reload, it doesn't try to open messages again. Similar to Zoom.
+                urlParams.set('job_done', true);
+                history.pushState(null, '', window.location.href.split('?')[0]+'?'+urlParams.toString());
+
+                // Redirect to smsUrl
                 window.location.href = smsUrl;
-            } else {
-                document.body.innerHTML = '<h1>Error: No phone number provided.</h1>';
-                document.body.innerHTML += '<p>Make sure to provide at least one phone number in the URL query string ("?phone=..."). Separate multiple phone numbers with commas. Phone numbers must have a leading 1 (or other country code).</p>';
             }
         };
     </script>
